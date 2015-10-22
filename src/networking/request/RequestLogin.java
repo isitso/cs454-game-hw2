@@ -18,7 +18,10 @@ public class RequestLogin extends GameRequest {
 		super();
 	}
 
-	// Must override the abstract class' method
+	/**
+	 * Get the data from socket
+	 * Expect: username and password
+	 */
 	@Override
 	public void parse() throws IOException {
 		/**
@@ -34,7 +37,13 @@ public class RequestLogin extends GameRequest {
 
 	}
 
-	// Must override the abstract class' method
+	/**
+	 * Connect to the database
+	 * Check for account exist or not
+	 * Check for password is correct or not
+	 * Check for account is currently in use or not
+	 * Generate the Response
+	 */
 	@Override
 	public void doBusiness() throws Exception {
 
@@ -95,6 +104,9 @@ public class RequestLogin extends GameRequest {
 			responses.add(responseLogin);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			// the last thing to do is closing the connection to the DB
+			closeConnectionToDB();
 		}
 	}
 }

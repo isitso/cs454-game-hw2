@@ -18,7 +18,11 @@ public class ResponseLogin extends GameResponse {
 		// Set the response id 
 		responseCode = Constants.S_AUTH;
 	}
-	// Must override abstract class' method
+
+	/**
+	 * Construct the packet using the flag, errorType,
+	 * and Character List
+	 */
     @Override
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
