@@ -10,6 +10,7 @@ import java.util.List;
 // Custom Imports
 import core.GameClient;
 import networking.response.GameResponse;
+import java.sql.*;
 
 /**
  * The GameRequest class is an abstract class used as a basis for storing
@@ -21,9 +22,11 @@ public abstract class GameRequest {
     protected DataInputStream dataInput;
     protected List<GameResponse> responses;
     protected int request_id;
+    protected Connection c;	// Connection to the database
 
     public GameRequest() {
         responses = new ArrayList<GameResponse>();
+        c = null;
     }
 
     public int getID() {
@@ -65,6 +68,33 @@ public abstract class GameRequest {
         return responses;
     }
 
+    
+    /**
+     * Make connection to the database
+     * http://www.tutorialspoint.com/sqlite/sqlite_java.htm
+     */
+    public void makeConnectionToDB(){
+    	try{
+    	Class.forName("org.sqlite.JDBC");
+    	// The database need to changed to working one
+    	c = DriverManager.getConnection("jdbc:sqlite:test.db");
+    	}catch (Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    /**
+     * Close connection to the database
+     */
+    public void closeConnectionToDB(){
+    	try{
+    		// Only close the connection if it is still open
+    		if ((c != null) && c.isValid(0))
+    			c.close();
+    	}catch (Exception e){
+    		e.printStackTrace();
+    	}
+    }
     @Override
     public String toString() {
         String str = "";

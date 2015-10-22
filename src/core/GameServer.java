@@ -29,7 +29,7 @@ public class GameServer {
     private GameServerConf configuration; // Stores server config. variables
     private boolean ready = false; // Used to keep server looping
     private HashMap<Long, GameClient> activeThreads = new HashMap<Long, GameClient>(); // Stores active threads by thread ID
-    //private HashMap<Integer, Player> activePlayers = new HashMap<Integer, Player>(); // Stores active players by player ID
+    private HashMap<Integer, Player> activePlayers = new HashMap<Integer, Player>(); // Stores active players by player ID
 
     /**
      * Initialize the GameServer by setting up the request types and creating a

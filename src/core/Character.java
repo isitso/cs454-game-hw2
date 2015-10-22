@@ -7,7 +7,7 @@ public class Character {
 	 */
 	// Class members
 	int id;
-	int type_id;	// determine which model to use
+	int typeId;	// determine which model to use
 	String name;
 	float x, y, z, h, p, r;	// xyz is for position. hpr is for hpr
 	
@@ -60,10 +60,11 @@ public class Character {
 	public void setR(float r) {
 		this.r = r;
 	}
-	public int getType_id() {
-		return type_id;
+	public int getTypeId() {
+		return typeId;
 	}
-	public void setType_id(int type_id) {
-		this.type_id = type_id;
+	public void setTypeId(int typeId) {
+		this.typeId = typeId;
 	}
+
 }

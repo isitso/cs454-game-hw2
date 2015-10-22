@@ -21,10 +21,10 @@ public class GameRequestTable {
         requestNames = new HashMap<Short, Class>();
 
         // Populate the hash map using request codes and class names
-        /*add(Constants.CMSG_AUTH, "RequestLogin");
-        add(Constants.CMSG_CHAT, "RequestChat");
-        add(Constants.CMSG_HEARTBEAT, "RequestHeartbeat");
-        add(Constants.CMSG_SAVE_EXIT_GAME, "RequestExitGame");*/
+        add(Constants.C_AUTH, "RequestLogin");
+        add(Constants.C_CHAT, "RequestChat");
+        add(Constants.C_HEARTBEAT, "RequestHeartbeat");
+//        add(Constants.CMSG_SAVE_EXIT_GAME, "RequestExitGame");
         add(Constants.RAND_INT, "RequestInt");
         add(Constants.RAND_STRING, "RequestString");
         add(Constants.RAND_SHORT, "RequestShort");
