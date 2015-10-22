@@ -1,6 +1,10 @@
 package core;
 
 public class Player {
+	/**
+	 * Player class hold the data of one account
+	 * It should include account_id, username, and current playing Character
+	 */
 	String username;
 	Character character;
 	int id;	// account id

@@ -1,6 +1,10 @@
 package core;
 
 public class Character {
+	/**
+	 * Character class hold data for one character in the game
+	 * It can be a player character or NPC
+	 */
 	// Class members
 	int id;
 	int type_id;	// determine which model to use
