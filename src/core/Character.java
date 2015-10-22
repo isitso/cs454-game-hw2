@@ -1,0 +1,65 @@
+package core;
+
+public class Character {
+	// Class members
+	int id;
+	int type_id;	// determine which model to use
+	String name;
+	float x, y, z, h, p, r;	// xyz is for position. hpr is for hpr
+	
+	// Getters and setters
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public float getX() {
+		return x;
+	}
+	public void setX(float x) {
+		this.x = x;
+	}
+	public float getY() {
+		return y;
+	}
+	public void setY(float y) {
+		this.y = y;
+	}
+	public float getZ() {
+		return z;
+	}
+	public void setZ(float z) {
+		this.z = z;
+	}
+	public float getH() {
+		return h;
+	}
+	public void setH(float h) {
+		this.h = h;
+	}
+	public float getP() {
+		return p;
+	}
+	public void setP(float p) {
+		this.p = p;
+	}
+	public float getR() {
+		return r;
+	}
+	public void setR(float r) {
+		this.r = r;
+	}
+	public int getType_id() {
+		return type_id;
+	}
+	public void setType_id(int type_id) {
+		this.type_id = type_id;
+	}
+}
