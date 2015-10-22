@@ -3,3 +3,9 @@
 /RequestInt.class
 /RequestShort.class
 /RequestString.class
+/RequestLogout.class
+/RequestSelectCharacter.class
+/RequestCreateAccount.class
+/RequestMove.class
+/RequestChat.class
+/RequestHeartbeat.class
