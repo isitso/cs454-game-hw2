@@ -13,6 +13,7 @@ import networking.response.ResponseLogin;
 import core.Character;
 
 public class RequestLogin extends GameRequest {
+	String username, pwd;
 	public RequestLogin() {
 		// TODO Auto-generated constructor stub
 		super();
@@ -29,8 +30,8 @@ public class RequestLogin extends GameRequest {
 		 */
 		// Expected data: String username, String pwd
 		try {
-			String username = DataReader.readString(dataInput);
-			String pwd = DataReader.readString(dataInput);
+			username = DataReader.readString(dataInput);
+			pwd = DataReader.readString(dataInput);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,22 +47,25 @@ public class RequestLogin extends GameRequest {
 	 */
 	@Override
 	public void doBusiness() throws Exception {
-
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		ResponseLogin responseLogin = new ResponseLogin();
 		try {
 			// Query for the account in the database
 			makeConnectionToDB(); // Open the connection to DB
-			stmt = c.createStatement();
-			String sql = ""; // Query to get the accounts with username
-			ResultSet rs = stmt.executeQuery(sql);
+			String sql = "SELECT * FROM user WHERE username = ?;"; // Query to get the accounts with username
+			pstmt = c.prepareStatement(sql);
+			pstmt.setString(1, username);
+			ResultSet rs = pstmt.executeQuery(sql);
 
 			// Got result from query. Now check for valid or none
 			if (rs.next()) {
 				// Account exists. Now check for password
-				sql = ""; // Query to get the list of accounts with certain
+				sql = "SELECT * FROM user WHERE username = ? AND password = ?"; // Query to get the list of accounts with certain
 							// username and password
-				rs = stmt.executeQuery(sql);
+				pstmt = c.prepareStatement(sql);
+				pstmt.setString(1, username);
+				pstmt.setString(2, pwd);
+				rs = pstmt.executeQuery(sql);
 				if (rs.next()) {
 					// check if the account is currently in use
 					boolean isOnline = rs.getBoolean("is_online");
@@ -75,8 +79,12 @@ public class RequestLogin extends GameRequest {
 						responseLogin.setFlag(Constants.LOGIN_SUCCESS);
 
 						// Get Character list from the database
-						sql = "";
-						rs = stmt.executeQuery(sql);
+						// get the user id
+						int id = rs.getInt("id");
+						sql = "SELECT * FROM character WHERE user_id = ?";
+						pstmt = c.prepareStatement(sql);
+						pstmt.setInt(1, id);
+						rs = pstmt.executeQuery(sql);
 
 						// Put them into array list
 						ArrayList<Character> list = new ArrayList<Character>();
