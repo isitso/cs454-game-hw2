@@ -12,6 +12,7 @@ import java.sql.*;
 
 // Custom Imports
 import configuration.GameServerConf;
+import database.DBHelper;
 //import dataAccessLayer.DAO;
 import metadata.GameRequestTable;
 //import model.Player;
@@ -66,7 +67,7 @@ public class GameServer {
 	 */
 	private void configure() {
 		ConfFileParser confFileParser = new ConfFileParser(
-				"conf/gameServer.conf");
+				"../conf/gameServer.conf");
 		configuration.setConfRecords(confFileParser.parse());
 	}
 
@@ -96,7 +97,11 @@ public class GameServer {
 	private void run() {
 		ServerSocket listenSocket;
 		int serverPort = configuration.getPortNumber();
-
+		
+		// Try to create tables if they don't exist
+		DBHelper helper = new DBHelper();
+		helper.createTables();
+		
 		try {
 			// Start to listen on the given port for incoming connections
 			listenSocket = new ServerSocket(serverPort);
