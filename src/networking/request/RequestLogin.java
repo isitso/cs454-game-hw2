@@ -57,27 +57,19 @@ public class RequestLogin extends GameRequest {
 			pstmt.setString(1, username);
 			ResultSet rs = pstmt.executeQuery(sql);
 
-			// Got result from query. Now check for valid or none
+			// Got result from query. Now check for valid or not
 			if (rs.next()) {
 				// Account exists. Now check for password
-				sql = "SELECT * FROM user WHERE username = ? AND password = ?"; // Query to get the list of accounts with certain
-							// username and password
-				pstmt = c.prepareStatement(sql);
-				pstmt.setString(1, username);
-				pstmt.setString(2, pwd);
-				rs = pstmt.executeQuery(sql);
-				if (rs.next()) {
+				String password = rs.getString("password");
+				if (password.equals(pwd)) {
 					// check if the account is currently in use
 					boolean isOnline = rs.getBoolean("is_online");
 					if (isOnline) {
 						// Should not let this user login again
-						responseLogin.setFlag(Constants.LOGIN_FAIL);
 						responseLogin
-								.setErrorType(Constants.ERROR_ACCOUNT_IS_IN_USE);
+								.setLoginFail(Constants.ERROR_ACCOUNT_IS_IN_USE);
 					} else {
 						// Everything is good. Login success
-						responseLogin.setFlag(Constants.LOGIN_SUCCESS);
-
 						// Get Character list from the database
 						// get the user id
 						int id = rs.getInt("id");
@@ -95,17 +87,15 @@ public class RequestLogin extends GameRequest {
 							character.setTypeId(rs.getInt("type_id"));
 							list.add(character);
 						}
-						responseLogin.setCharacterList(list);
+						responseLogin.setLoginSuccess(list);
 					}
 				}else {
 					// Account exist but wrong password
-					responseLogin.setFlag(Constants.LOGIN_FAIL);
-					responseLogin.setErrorType(Constants.ERROR_WRONG_PASSWORD);					
+					responseLogin.setLoginFail(Constants.ERROR_WRONG_PASSWORD);					
 				}
 			} else {
 				// Send back the response for login failure: account doesn't exist
-				responseLogin.setFlag(Constants.LOGIN_FAIL);
-				responseLogin.setErrorType(Constants.ERROR_ACCOUNT_NOT_FOUND);
+				responseLogin.setLoginFail(Constants.ERROR_ACCOUNT_NOT_FOUND);
 			}
 			
 			// finally add the response to the list

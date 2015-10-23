@@ -252,20 +252,5 @@ public class GameServer {
 		}
 	}
 
-	/**
-	 * Check for the database If it doesn't exist, create one
-	 * http://www.tutorialspoint.com/sqlite/sqlite_java.htm
-	 */
-	public static void checkDB() {
-		Connection c = null;
-		try {
-			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:hw2.db");
-		} catch (Exception e) {
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			System.exit(0);
-		}
-		System.out.println("Opened database successfully");
-	}
 
 }

@@ -42,7 +42,31 @@ public class ResponseLogin extends GameResponse {
         return packet.getBytes();
     }
     
-
+    /**
+     * Set login fail. Flag is auto set to fail.
+     * @param errorType which error to be send to the client
+     * @return void
+     */
+    public void setLoginFail(int error){
+    	// set the flag to fail
+    	flag = Constants.LOGIN_FAIL;
+    	
+    	// set the error type
+    	errorType = error;
+    }
+    
+    /**
+     * Set log in success. Flag is auto set to success.
+     * character list must be given
+     * @param characterList list of characters to send to the client
+     * @return
+     */
+    public void setLoginSuccess(ArrayList<Character> list){
+    	// set the flag to success
+    	flag = Constants.LOGIN_SUCCESS;
+    	characterList = list;
+    }
+    
 	public int getFlag() {
 		return flag;
 	}
