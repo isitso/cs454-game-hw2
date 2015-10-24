@@ -57,7 +57,7 @@ public class RequestLogin extends GameRequest {
 			String sql = "SELECT * FROM user WHERE username = ?;"; // Query to get the accounts with username
 			pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
-			ResultSet rs = pstmt.executeQuery(sql);
+			ResultSet rs = pstmt.executeQuery();
 
 			// Got result from query. Now check for valid or not
 			if (rs.next()) {
@@ -78,7 +78,7 @@ public class RequestLogin extends GameRequest {
 						sql = "SELECT * FROM character WHERE user_id = ?";
 						pstmt = c.prepareStatement(sql);
 						pstmt.setInt(1, id);
-						rs = pstmt.executeQuery(sql);
+						rs = pstmt.executeQuery();
 
 						// Put them into array list
 						ArrayList<Character> list = new ArrayList<Character>();
