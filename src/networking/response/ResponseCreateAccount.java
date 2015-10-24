@@ -8,10 +8,26 @@ public class ResponseCreateAccount extends GameResponse {
 	private int flag;
 	private int errorType;
 	
-	// Must override abstract class' method
+	/**
+	 * Must have for each response class because responseCode must be set
+	 */
+	public ResponseCreateAccount() {
+		// TODO Auto-generated constructor stub
+		responseCode = Constants.S_REGISTER;
+	}
+	
+	/**
+	 * Generate packet for registration
+	 */
     @Override
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
+        packet.addInt32(flag);
+        if (flag == Constants.REGISTRATION_FAIL){
+        	// registration fail. what kind of error?
+        	packet.addInt32(errorType);
+        }
+        // registration success doesn't require any more information
         return packet.getBytes();
     }
     
@@ -25,6 +41,8 @@ public class ResponseCreateAccount extends GameResponse {
     	
     	// set error type
     	errorType = error;
+    	if (Constants.DEBUG)
+    		System.out.printf("Registration fail. Error = %d\n", errorType);
     }
     
     /**
@@ -33,5 +51,7 @@ public class ResponseCreateAccount extends GameResponse {
     public void setRegistrationSuccess(){
     	// set the flag to success
     	flag = Constants.REGISTRATION_SUCCESS;
+    	if (Constants.DEBUG)
+    		System.out.println("Registration success. Account created.");
     }
 }

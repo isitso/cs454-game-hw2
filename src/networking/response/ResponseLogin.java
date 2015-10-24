@@ -28,7 +28,7 @@ public class ResponseLogin extends GameResponse {
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
         packet.addInt32(flag);
-        if (flag == 0){
+        if (flag == Constants.LOGIN_FAIL){
         	// Login fail: what kind of error?
         	packet.addInt32(errorType);
         }else{
