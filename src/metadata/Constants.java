@@ -68,5 +68,6 @@ public class Constants {
     public static final int CHARACTER_CREATION_SLOTS_FULL = 0;
     public static final int CHARACTER_CREATION_NAME_TAKEN = 1;
 
-    
+    // DEBUG
+    public static final boolean DEBUG = true;
 }

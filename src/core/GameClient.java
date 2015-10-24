@@ -93,6 +93,8 @@ public class GameClient extends Thread {
                     GameRequest request = GameRequestTable.get(requestCode);
                     // If the request exists, process like following:
                     if (request != null) {
+                    	if (Constants.DEBUG)
+                    		System.out.println("Got request packet");
                         request.setGameClient(this);
                         // Pass input stream to the request object
                         request.setDataInputStream(dataInput);

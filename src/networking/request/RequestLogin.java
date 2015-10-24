@@ -101,6 +101,7 @@ public class RequestLogin extends GameRequest {
 			} else {
 				// Send back the response for login failure: account doesn't exist
 				responseLogin.setLoginFail(Constants.ERROR_ACCOUNT_NOT_FOUND);
+				
 			}
 			// finally add the response to the list
 			responses.add(responseLogin);

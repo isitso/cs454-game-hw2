@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 
 
+
 import metadata.Constants;
 import utility.GamePacket;
 import core.Character;
@@ -53,6 +54,8 @@ public class ResponseLogin extends GameResponse {
     	
     	// set the error type
     	errorType = error;
+    	if (Constants.DEBUG)
+			System.out.printf("Login fail. error =%d\n", errorType);
     }
     
     /**
@@ -65,6 +68,8 @@ public class ResponseLogin extends GameResponse {
     	// set the flag to success
     	flag = Constants.LOGIN_SUCCESS;
     	characterList = list;
+    	if (Constants.DEBUG)
+			System.out.println("Login success");
     }
     
 	public int getFlag() {
