@@ -44,7 +44,7 @@ public class RequestCreateAccount extends GameRequest {
 			String sql = "SELECT * FROM user WHERE username = ?;";
 			PreparedStatement pstmt = c.prepareStatement(sql);
 			pstmt.setString(1, username);
-			ResultSet rs = pstmt.executeQuery(sql);
+			ResultSet rs = pstmt.executeQuery();
 			
 			if (rs.next()){
 				// account already exists
