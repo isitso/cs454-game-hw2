@@ -38,7 +38,7 @@ public class GameClient extends Thread {
     private OutputStream outputStream; // For use with outgoing responses
     private DataInputStream dataInputStream; // For use with incoming requests
     private DataInputStream dataInput;
-    //private Player player;
+    private Player player;
     private boolean isPlaying;
     private Queue<GameResponse> updates; // Temporarily store responses for client
 
@@ -148,13 +148,13 @@ public class GameClient extends Thread {
         return server;
     }
 
-    /*public Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
     public Player setPlayer(Player player) {
         return this.player = player;
-    }*/
+    }
 
     public boolean addResponseForUpdate(GameResponse response) {
         return updates.add(response);

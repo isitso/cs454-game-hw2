@@ -77,7 +77,7 @@ public abstract class GameRequest {
     	try{
     	Class.forName("org.sqlite.JDBC");
     	// The database need to changed to working one
-    	c = DriverManager.getConnection("jdbc:sqlite:test.db");
+    	c = DriverManager.getConnection("jdbc:sqlite:hw2.db");
     	}catch (Exception e){
     		e.printStackTrace();
     	}

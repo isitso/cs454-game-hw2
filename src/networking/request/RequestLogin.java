@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import metadata.Constants;
 import networking.response.ResponseLogin;
 import core.Character;
+import core.Player;
 
 public class RequestLogin extends GameRequest {
 	String username, pwd;
@@ -49,6 +50,7 @@ public class RequestLogin extends GameRequest {
 	public void doBusiness() throws Exception {
 		PreparedStatement pstmt = null;
 		ResponseLogin responseLogin = new ResponseLogin();
+		int id = 0;
 		try {
 			// Query for the account in the database
 			makeConnectionToDB(); // Open the connection to DB
@@ -72,7 +74,7 @@ public class RequestLogin extends GameRequest {
 						// Everything is good. Login success
 						// Get Character list from the database
 						// get the user id
-						int id = rs.getInt("id");
+						id = rs.getInt("id");
 						sql = "SELECT * FROM character WHERE user_id = ?";
 						pstmt = c.prepareStatement(sql);
 						pstmt.setInt(1, id);
@@ -87,7 +89,10 @@ public class RequestLogin extends GameRequest {
 							character.setTypeId(rs.getInt("type_id"));
 							list.add(character);
 						}
+						// Set information to the response
 						responseLogin.setLoginSuccess(list);
+						// Store player to server
+						//client.getServer().
 					}
 				}else {
 					// Account exist but wrong password
@@ -97,9 +102,15 @@ public class RequestLogin extends GameRequest {
 				// Send back the response for login failure: account doesn't exist
 				responseLogin.setLoginFail(Constants.ERROR_ACCOUNT_NOT_FOUND);
 			}
-			
 			// finally add the response to the list
 			responses.add(responseLogin);
+			
+			// store player into gameclient
+			Player p = new Player();
+			p.setId(id);
+			p.setCharacter(new Character());
+			p.setUsername(username);
+			client.setPlayer(p);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally {
