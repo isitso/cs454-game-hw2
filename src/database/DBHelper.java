@@ -8,6 +8,9 @@ public class DBHelper {
 	 * Create new tables if needed
 	 */
 	
+	/** Constructor
+	 * 
+	 */
 	Connection c;
 	public DBHelper(){
 		c = null;
@@ -80,4 +83,5 @@ public class DBHelper {
 		}
 		closeConnectionToDB();		
 	}
+	
 }

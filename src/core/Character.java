@@ -67,4 +67,21 @@ public class Character {
 		this.typeId = typeId;
 	}
 
+	/**
+	 * set position x y z at the same time
+	 */
+	public void setPos(float x, float y, float z){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
+	/**
+	 * set hpr
+	 */
+	public void setHpr(float h, float p, float r) {
+		this.h = h;
+		this.p = p;
+		this.r = r;
+	}
 }

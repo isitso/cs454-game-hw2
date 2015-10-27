@@ -68,6 +68,15 @@ public class Constants {
     public static final int CHARACTER_CREATION_SLOTS_FULL = 0;
     public static final int CHARACTER_CREATION_NAME_TAKEN = 1;
 
+    // Spawn flags
+    public static final int SPAWN_PLAYER = 0;
+    public static final int SPAWN_NPC = 1;
+    public static final int SPAWN_MAIN_PLAYER = 2;
+    
+    // Gamestates
+    public static final int GAMESTATE_NOT_LOGGED_IN = 0;
+    public static final int GAMESTATE_LOGGED_IN = 1;
+    public static final int GAMESTATE_PLAYING = 2;
     // DEBUG
     public static final boolean DEBUG = true;
 }

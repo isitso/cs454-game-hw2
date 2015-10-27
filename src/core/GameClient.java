@@ -41,6 +41,7 @@ public class GameClient extends Thread {
     private Player player;
     private boolean isPlaying;
     private Queue<GameResponse> updates; // Temporarily store responses for client
+    private int gamestate;	// keep track of client's gamestate
 
     /**
      * Initialize the GameClient using the client socket and creating both input
@@ -213,4 +214,14 @@ public class GameClient extends Thread {
 
         return str;
     }
+
+	public int getGamestate() {
+		return gamestate;
+	}
+
+	public void setGamestate(int gamestate) {
+		this.gamestate = gamestate;
+	}
+    
+    
 }
