@@ -1,6 +1,8 @@
 package database;
 
 import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class DBHelper {
 	/**
@@ -57,23 +59,27 @@ public class DBHelper {
 	 * 
 	 */
 	public void createTables(){
-		// String to create tables
-		String sql = "CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT NOT NULL, password TEXT NOT NULL, is_online INTEGER NOT NULL);"
-			+ "\nCREATE TABLE  IF NOT EXISTS character_type(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, model TEXT NOT NULL);"
-			+ "\nCREATE TABLE  IF NOT EXISTS character(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-	        +  "user_id INTEGER NOT NULL,"
-	        +  "char_type_id INTEGER NOT NULL, char_name TEXT NOT NULL UNIQUE,"
-	        + "char_active INTEGER NOT NULL,"
-	        + "char_x FLOAT NOT NULL, char_y FLOAT NOT NULL, char_z FLOAT NOT NULL,"
-	        + "char_h FLOAT NOT NULL, char_p FLOAT NOT NULL, char_r FLOAT NOT NULL,"
-	        + "FOREIGN KEY(user_id) REFERENCES user(id),"
-	        + "FOREIGN KEY(char_type_id) REFERENCES character_type(id));";
+		List<String> statements = Arrays.asList("CREATE TABLE IF NOT EXISTS user(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, username TEXT NOT NULL UNIQUE, password TEXT NOT NULL, is_online INTEGER NOT NULL);",
+				"CREATE TABLE  IF NOT EXISTS character_type(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT NOT NULL, model TEXT NOT NULL);",
+				"CREATE TABLE  IF NOT EXISTS character("
+						+ "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+				        + "user_id INTEGER NOT NULL,"
+				        + "char_type_id INTEGER NOT NULL,"
+				        + "char_active INTEGER NOT NULL,"
+				        + "char_x FLOAT NOT NULL, char_y FLOAT NOT NULL, char_z FLOAT NOT NULL,"
+				        + "char_h FLOAT NOT NULL, char_p FLOAT NOT NULL, char_r FLOAT NOT NULL,"
+				        + "FOREIGN KEY(user_id) REFERENCES user(id),"
+				        + "FOREIGN KEY(char_type_id) REFERENCES character_type(id));"
+				);
+
 		
 		// Open the connection
 		openConnectionToDB();
 		try {
 			Statement stmt = c.createStatement();
-			stmt.execute(sql);
+			for(int index=0; index < statements.size(); index++){
+				stmt.execute(statements.get(index));
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
