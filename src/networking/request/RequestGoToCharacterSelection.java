@@ -38,8 +38,7 @@ public class RequestGoToCharacterSelection extends GameRequest {
     		// client is playing the game with a character. save it
     		makeConnectionToDB();	// open connection to database
     		// update position and hpr
-    		String sql = "UPDATE user SET (char_x, char_y, char_z, char_h, char_p, char_z) "
-    				+ "values(?, ?, ?, ?, ?, ?) WHERE id = ?;)";
+    		String sql = "UPDATE user SET char_x = ?, char_y = ?, char_z = ?, char_h = ?, char_p = ?, char_z = ? WHERE id = ?;)";
     		PreparedStatement pstmt = c.prepareStatement(sql);
     		pstmt.setFloat(1, client.getPlayer().getCharacter().getX());
     		pstmt.setFloat(2, client.getPlayer().getCharacter().getY());

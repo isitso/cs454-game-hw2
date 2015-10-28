@@ -5,14 +5,17 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.ServerSocket;
 import java.sql.SQLException;
+import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 //import java.util.List;
 import java.sql.*;
 
 // Custom Imports
 import configuration.GameServerConf;
 import database.DBHelper;
+import metadata.Constants;
 //import dataAccessLayer.DAO;
 import metadata.GameRequestTable;
 //import model.Player;
@@ -97,11 +100,11 @@ public class GameServer {
 	private void run() {
 		ServerSocket listenSocket;
 		int serverPort = configuration.getPortNumber();
-		
+
 		// Try to create tables if they don't exist
 		DBHelper helper = new DBHelper();
 		helper.createTables();
-		
+
 		try {
 			// Start to listen on the given port for incoming connections
 			listenSocket = new ServerSocket(serverPort);
@@ -165,18 +168,22 @@ public class GameServer {
 
 	/**
 	 * Get the GameClient thread for the player using character name
-	 * @param characterName name of the character to look for
+	 * 
+	 * @param characterName
+	 *            name of the character to look for
 	 * @return GameClient thread
 	 */
-	public GameClient getThreadByCharacterName(String characterName){
+	public GameClient getThreadByCharacterName(String characterName) {
 		// loop through the list of threads and look for the character
-		for (GameClient client : activeThreads.values()){
-			if (client.getPlayer().getCharacter().getName().equalsIgnoreCase(characterName))
+		for (GameClient client : activeThreads.values()) {
+			if (client.getPlayer().getCharacter().getName()
+					.equalsIgnoreCase(characterName))
 				return client;
-		}		
+		}
 		// if cannot find the character return null
 		return null;
 	}
+
 	public int getNumberOfCurrentThreads() {
 		return activeThreads.size();
 	}
@@ -185,19 +192,24 @@ public class GameServer {
 		activeThreads.put(client.getId(), client);
 	}
 
-	/*
-	 * public List<Player> getActivePlayers() { return new
-	 * ArrayList<Player>(activePlayers.values()); }
-	 * 
-	 * public Player getActivePlayer(int player_id) { return
-	 * activePlayers.get(player_id); }
-	 * 
-	 * public void setActivePlayer(Player player) {
-	 * activePlayers.put(player.getID(), player); }
-	 * 
-	 * public void removeActivePlayer(int player_id) {
-	 * activePlayers.remove(player_id); }
-	 */
+
+	public ArrayList<Player> getActivePlayers() {
+		return new ArrayList<Player>(activePlayers.values());
+	}
+
+	public Player getActivePlayer(int player_id) {
+		return activePlayers.get(player_id);
+	}
+
+	public void setActivePlayer(Player player) {
+		activePlayers.put(player.getId(), player);
+	}
+
+	public void removeActivePlayer(int player_id) {
+		activePlayers.remove(player_id);
+	}
+
+	
 
 	public void deletePlayerThreadOutOfActiveThreads(Long threadID) {
 		activeThreads.remove(threadID);
@@ -246,7 +258,7 @@ public class GameServer {
 	public void addResponseForAllOnlinePlayers(long player_id,
 			GameResponse response) {
 		for (GameClient client : activeThreads.values()) {
-			if (client.getId() != player_id) {
+			if (client.getId() != player_id && client.getGamestate() == Constants.GAMESTATE_PLAYING) {
 				client.addResponseForUpdate(response);
 			}
 		}
@@ -265,6 +277,5 @@ public class GameServer {
 			gameServer.run();
 		}
 	}
-
 
 }

@@ -6,7 +6,7 @@ import networking.response.ResponseMove;
 import utility.DataReader;
 
 public class RequestMove extends GameRequest {
-	float x, y, z;
+	float x, y, z, h, p, r;
 	
 	/** constructor
 	 * 
@@ -18,7 +18,7 @@ public class RequestMove extends GameRequest {
 	
 	/**
 	 * get data from socket
-	 * expected: x, y, z
+	 * expected: x, y, z, h, p, r
 	 */
     @Override
     public void parse() throws IOException {
@@ -26,6 +26,9 @@ public class RequestMove extends GameRequest {
     		x = DataReader.readFloat(dataInput);
     		y = DataReader.readFloat(dataInput);
     		z = DataReader.readFloat(dataInput);
+    		h = DataReader.readFloat(dataInput);
+    		p = DataReader.readFloat(dataInput);
+    		r = DataReader.readFloat(dataInput);
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -41,7 +44,7 @@ public class RequestMove extends GameRequest {
     	// set character new position
     	client.getPlayer().getCharacter().setPos(x, y, z);
     	// generate response
-    	response.setMove(client.getPlayer().getCharacter().getId(), x, y, z);
+    	response.setMove(client.getPlayer().getCharacter().getId(), x, y, z, h, p, r);
     	// send to other players
     	client.getServer().addResponseForAllOnlinePlayers(client.getId(), response);
     }

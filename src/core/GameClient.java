@@ -134,6 +134,9 @@ public class GameClient extends Thread {
         // update database
         if (gamestate == Constants.GAMESTATE_PLAYING){
         	// Update character
+        	
+        	// remove from server's online list
+        	server.removeActivePlayer(player.getId());
         }else if (gamestate == Constants.GAMESTATE_LOGGED_IN){
         	// do log out.
         	DBHelper helper = new DBHelper();
@@ -141,7 +144,7 @@ public class GameClient extends Thread {
         	Connection c = helper.getConnectionToDB();
     		String sql = "UPDATE user SET is_online = 0 WHERE id = ?";
     		if (Constants.DEBUG){
-    			System.out.printf("Disconnect user_id = %d/n", player.getId());
+    			System.out.printf("Disconnect user_id = %d", player.getId());
     		}
     		try {
         	PreparedStatement pstmt = c.prepareStatement(sql);

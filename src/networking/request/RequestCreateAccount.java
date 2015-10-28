@@ -57,6 +57,7 @@ public class RequestCreateAccount extends GameRequest {
 				pstmt.setString(2, pwd);
 				pstmt.execute();
 				response.setRegistrationSuccess();
+				
 			}
 			// add response to the list
 			responses.add(response);
