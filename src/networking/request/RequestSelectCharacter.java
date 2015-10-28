@@ -86,6 +86,7 @@ public class RequestSelectCharacter extends GameRequest {
 				// change client's gamestate to playing
 				client.getPlayer().setCharacter(character);
 				client.setGamestate(Constants.GAMESTATE_PLAYING);
+				response.setChracterSelectionToSuccess();
 				responses.add(response);
 
 				// spawn main player and other
