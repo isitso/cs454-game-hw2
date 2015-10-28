@@ -112,6 +112,9 @@ public class RequestSelectCharacter extends GameRequest {
 			} catch (Exception e) {
 				e.printStackTrace();
 				// response.setChracterSelectionToFail();
+			}finally{
+				// close connection
+				closeConnectionToDB();
 			}
 		}
 	}
