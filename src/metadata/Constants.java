@@ -37,7 +37,7 @@ public class Constants {
     // Other
     public static final int SAVE_INTERVAL = 60000;
     public static final String CLIENT_VERSION = "1.00";
-    public static final int TIMEOUT_SECONDS = 90;
+    public static final int TIMEOUT_SECONDS = 10;
     
     
     // Login flags

@@ -20,9 +20,10 @@ public class RequestHeartbeat extends GameRequest {
     }
 
     /**
-     * 
+     * Client requested for updates
      */
     @Override
     public void doBusiness() throws Exception {
+    	client.flushResponses();
     }
 }

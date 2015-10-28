@@ -42,6 +42,9 @@ public class RequestSelectCharacter extends GameRequest {
 //				pstmt.execute();
 //				response.setChracterSelectionToSuccess();
 
+				// print out something
+				if (Constants.DEBUG)
+					System.out.printf("Client selected character with char_type_id = %d", type_id);
 				// updating the Character class
 				String sql = "SELECT * FROM character WHERE char_type_id = ? AND user_id = ?";
 				PreparedStatement pstmt = c.prepareStatement(sql);
@@ -50,6 +53,8 @@ public class RequestSelectCharacter extends GameRequest {
 				ResultSet rs = pstmt.executeQuery();
 				if (!rs.next()) {
 					// no character. create one for that account
+					if (Constants.DEBUG)
+						System.out.println("No character in character table. Creating new one.");
 					sql = "INSERT INTO character(user_id, char_type_id, char_active, char_x, char_y, char_z, char_h, char_p, char_r)\n"
 							+ "VALUES(?, ?, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);";
 					pstmt = c.prepareStatement(sql);
@@ -63,6 +68,8 @@ public class RequestSelectCharacter extends GameRequest {
 					pstmt.setInt(1, type_id);
 					pstmt.setInt(2, client.getPlayer().getId());
 					rs = pstmt.executeQuery();
+					if (Constants.DEBUG)
+						System.out.printf("Created new character with id = %d", rs.getInt("id"));
 				}
 				// success
 				Character character = new core.Character();

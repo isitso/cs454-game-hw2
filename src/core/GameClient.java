@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
-
 import database.DBHelper;
 // Custom Imports
 //import dataAccessLayer.PlayerDAO;
@@ -24,6 +23,7 @@ import metadata.GameRequestTable;
 import networking.request.GameRequest;
 import networking.response.GameResponse;
 import utility.DataReader;
+
 import java.sql.*;
 
 /**
@@ -35,48 +35,54 @@ import java.sql.*;
  */
 public class GameClient extends Thread {
 
-    private GameServer server; // References GameServer instance
-    private Socket mySocket; // Socket being used for this client
-    private InputStream inputStream;
-    private OutputStream outputStream; // For use with outgoing responses
-    private DataInputStream dataInputStream; // For use with incoming requests
-    private DataInputStream dataInput;
-    private Player player;
-    private boolean isPlaying;
-    private Queue<GameResponse> updates; // Temporarily store responses for client
-    private int gamestate;	// keep track of client's gamestate
+	private GameServer server; // References GameServer instance
+	private Socket mySocket; // Socket being used for this client
+	private InputStream inputStream;
+	private OutputStream outputStream; // For use with outgoing responses
+	private DataInputStream dataInputStream; // For use with incoming requests
+	private DataInputStream dataInput;
+	private Player player;
+	private boolean isPlaying;
+	private Queue<GameResponse> updates; // Temporarily store responses for
+											// client
+	private int gamestate; // keep track of client's gamestate
+	Connection c;
 
-    /**
-     * Initialize the GameClient using the client socket and creating both input
-     * and output streams.
-     * 
-     * @param clientSocket holds reference of the socket being used
-     * @param server holds reference to the server instance
-     * @throws IOException 
-     */
-    public GameClient(Socket clientSocket, GameServer server) throws IOException {
-        mySocket = clientSocket;
-        this.server = server;
-        updates = new LinkedList<GameResponse>();
+	/**
+	 * Initialize the GameClient using the client socket and creating both input
+	 * and output streams.
+	 * 
+	 * @param clientSocket
+	 *            holds reference of the socket being used
+	 * @param server
+	 *            holds reference to the server instance
+	 * @throws IOException
+	 */
+	public GameClient(Socket clientSocket, GameServer server)
+			throws IOException {
+		mySocket = clientSocket;
+		this.server = server;
+		updates = new LinkedList<GameResponse>();
 
-        inputStream = mySocket.getInputStream();
-        outputStream = mySocket.getOutputStream();
-        dataInputStream = new DataInputStream(inputStream);
-        gamestate = Constants.GAMESTATE_NOT_LOGGED_IN;
-        player = new Player();
-    }
+		inputStream = mySocket.getInputStream();
+		outputStream = mySocket.getOutputStream();
+		dataInputStream = new DataInputStream(inputStream);
+		gamestate = Constants.GAMESTATE_NOT_LOGGED_IN;
+		player = new Player();
+		c = null;
+	}
 
-    /**
-     * Holds the main loop that processes incoming requests by first identifying
-     * its type, then interpret the following data in each determined request
-     * class. Queued up responses created from each request class will be sent
-     * after the request is finished processing.
-     * 
-     * The loop exits whenever the isPlaying flag is set to false. One of these
-     * occurrences is triggered by a timeout. A timeout occurs whenever no
-     * activity is picked up from the client such as being disconnected.
-     */
-    @Override
+	/**
+	 * Holds the main loop that processes incoming requests by first identifying
+	 * its type, then interpret the following data in each determined request
+	 * class. Queued up responses created from each request class will be sent
+	 * after the request is finished processing.
+	 * 
+	 * The loop exits whenever the isPlaying flag is set to false. One of these
+	 * occurrences is triggered by a timeout. A timeout occurs whenever no
+	 * activity is picked up from the client such as being disconnected.
+	 */
+	@Override
     public void run() {
         isPlaying = true;
         long lastActivity = System.currentTimeMillis();
@@ -99,19 +105,20 @@ public class GameClient extends Thread {
                     GameRequest request = GameRequestTable.get(requestCode);
                     // If the request exists, process like following:
                     if (request != null) {
-                    	if (Constants.DEBUG)
-                    		System.out.println("Got request packet");
-                        request.setGameClient(this);
+                    	request.setGameClient(this);
                         // Pass input stream to the request object
                         request.setDataInputStream(dataInput);
                         // Parse the input stream
                         request.parse();
                         // Interpret the data
                         request.doBusiness();
+                        if (Constants.DEBUG && requestCode != Constants.C_HEARTBEAT)
+                    		System.out.println(request);
                         // Retrieve any responses created by the request object
                         for (GameResponse response : request.getResponses()) {
                             // Transform the response into bytes and pass it into the output stream
-                            outputStream.write(response.constructResponseInBytes());
+                            //outputStream.write(response.constructResponseInBytes());
+                        	updates.add(response);
                         }
                     }
                 } else {
@@ -131,105 +138,135 @@ public class GameClient extends Thread {
         System.out.println(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
         System.out.println("The client stops playing.");
 
-        // update database
-        if (gamestate == Constants.GAMESTATE_PLAYING){
-        	// Update character
-        	
-        	// remove from server's online list
-        	server.removeActivePlayer(player.getId());
-        }else if (gamestate == Constants.GAMESTATE_LOGGED_IN){
-        	// do log out.
-        	DBHelper helper = new DBHelper();
-        	helper.openConnectionToDB();
-        	Connection c = helper.getConnectionToDB();
-    		String sql = "UPDATE user SET is_online = 0 WHERE id = ?";
-    		if (Constants.DEBUG){
-    			System.out.printf("Disconnect user_id = %d", player.getId());
-    		}
-    		try {
-        	PreparedStatement pstmt = c.prepareStatement(sql);
-    		pstmt.setInt(1, player.getId());
-    		pstmt.executeUpdate();
-    		helper.closeConnectionToDB();
-    		} catch (Exception e){
-    			e.printStackTrace();
-    		}
+        if (gamestate != Constants.GAMESTATE_NOT_LOGGED_IN){
+	        // update database
+        	openConnectionToDB();
+        	String sql = "";
+        	PreparedStatement pstmt = null;
+        	try {
+		        if (gamestate == Constants.GAMESTATE_PLAYING){
+		        	// Update character
+		        	sql = "UPDATE character SET char_x = ?, char_y = ?, char_z = ?, char_h = ?, char_p = ?, char_z = ? WHERE id = ?;)";
+		        	pstmt = c.prepareStatement(sql);
+		    		pstmt.setFloat(1, getPlayer().getCharacter().getX());
+		    		pstmt.setFloat(2, getPlayer().getCharacter().getY());
+		    		pstmt.setFloat(3, getPlayer().getCharacter().getZ());
+		    		pstmt.setFloat(4, getPlayer().getCharacter().getH());
+		    		pstmt.setFloat(5, getPlayer().getCharacter().getP());
+		    		pstmt.setFloat(6, getPlayer().getCharacter().getR());
+		    		pstmt.setInt(7, getPlayer().getCharacter().getId());
+		        	pstmt.executeUpdate();
+		        	// remove from server's online list
+		        	server.removeActivePlayer(player.getId());
+		        }
+		        // do log out.
+		    	sql = "UPDATE user SET is_online = 0 WHERE id = ?";
+		    	if (Constants.DEBUG){
+		    		System.out.printf("Disconnect user_id = %d", player.getId());
+		    	}
+		    	
+		        pstmt = c.prepareStatement(sql);
+		    	pstmt.setInt(1, player.getId());
+		    	pstmt.executeUpdate();
+		    	closeConnectionToDB();
+		    } catch (Exception e){
+			e.printStackTrace();
+		    }
         }
         // Remove this GameClient from the server
         server.deletePlayerThreadOutOfActiveThreads(getId());
     }
 
-    public void stopClient() {
-        isPlaying = false;
-    }
+	public void stopClient() {
+		isPlaying = false;
+	}
 
-    public GameServer getServer() {
-        return server;
-    }
+	public GameServer getServer() {
+		return server;
+	}
 
-    public Player getPlayer() {
-        return player;
-    }
+	public Player getPlayer() {
+		return player;
+	}
 
-    public Player setPlayer(Player player) {
-        return this.player = player;
-    }
+	public Player setPlayer(Player player) {
+		return this.player = player;
+	}
 
-    public boolean addResponseForUpdate(GameResponse response) {
-        return updates.add(response);
-    }
+	public boolean addResponseForUpdate(GameResponse response) {
+		return updates.add(response);
+	}
 
-    /**
-     * Get all pending responses for this client.
-     * 
-     * @return all pending responses
-     */
-    public Queue<GameResponse> getUpdates() {
-        Queue<GameResponse> responseList = null;
+	/**
+	 * Get all pending responses for this client.
+	 * 
+	 * @return all pending responses
+	 */
+	public Queue<GameResponse> getUpdates() {
+		Queue<GameResponse> responseList = null;
 
-        synchronized (this) {
-            responseList = updates;
-            updates = new LinkedList<GameResponse>();
-        }
+		synchronized (this) {
+			responseList = updates;
+			updates = new LinkedList<GameResponse>();
+		}
 
-        return responseList;
-    }
+		return responseList;
+	}
 
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
+	public OutputStream getOutputStream() {
+		return outputStream;
+	}
 
-    /**
-     * Remove all responses for this client.
-     */
-    public void clearUpdateBuffer() {
-        updates.clear();
-    }
+	/**
+	 * Remove all responses for this client.
+	 */
+	public void clearUpdateBuffer() {
+		updates.clear();
+	}
 
-    public String getIP() {
-        return mySocket.getInetAddress().getHostAddress();
-    }
+	/**
+	 * Flush the response queue to the client
+	 * 
+	 * @return
+	 */
+	public void flushResponses() {
+		for (GameResponse response : updates) {
+			// Transform the response into bytes and pass it into the output
+			// stream
+			try {
+				outputStream.write(response.constructResponseInBytes());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		clearUpdateBuffer();
+	}
 
-    @Override
-    public String toString() {
-        String str = "";
+	public String getIP() {
+		return mySocket.getInetAddress().getHostAddress();
+	}
 
-        str += "-----" + "\n";
-        str += getClass().getName() + "\n";
-        str += "\n";
+	@Override
+	public String toString() {
+		String str = "";
 
-        for (Field field : getClass().getDeclaredFields()) {
-            try {
-                str += field.getName() + " - " + field.get(this) + "\n";
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
+		str += "-----" + "\n";
+		str += getClass().getName() + "\n";
+		str += "\n";
 
-        str += "-----";
+		for (Field field : getClass().getDeclaredFields()) {
+			try {
+				str += field.getName() + " - " + field.get(this) + "\n";
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+		}
 
-        return str;
-    }
+		str += "-----";
+
+		return str;
+	}
 
 	public int getGamestate() {
 		return gamestate;
@@ -238,6 +275,27 @@ public class GameClient extends Thread {
 	public void setGamestate(int gamestate) {
 		this.gamestate = gamestate;
 	}
-    
-    
+	/**
+	 * Close connection to the database
+	 */
+	public void closeConnectionToDB(){
+		try {
+			if ((c != null) && c.isValid(0))
+				c.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * Open connection to the database
+	 */
+	public void openConnectionToDB(){
+		try {
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:hw2.db");
+		} catch (Exception e) {
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+		}		
+	}
 }

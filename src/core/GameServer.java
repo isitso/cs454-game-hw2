@@ -104,6 +104,7 @@ public class GameServer {
 		// Try to create tables if they don't exist
 		DBHelper helper = new DBHelper();
 		helper.createTables();
+		helper.clearOnline(); 		// unstuck accounts
 
 		try {
 			// Start to listen on the given port for incoming connections

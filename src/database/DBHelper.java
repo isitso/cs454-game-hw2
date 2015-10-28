@@ -110,4 +110,20 @@ public class DBHelper {
 		closeConnectionToDB();		
 	}
 	
+	/** Clear is_online to unstuck accounts
+	 * 
+	 */
+	public void clearOnline(){
+		try {
+			openConnectionToDB();
+			Statement stmt = c.createStatement();
+			String sql = "UPDATE user SET is_online = 0;";
+			stmt.execute(sql);
+			closeConnectionToDB();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
