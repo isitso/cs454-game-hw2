@@ -9,6 +9,10 @@ public class Player {
 	Character character;
 	int id;	// account id
 	
+	public Player() {
+		// TODO Auto-generated constructor stub
+		character = new Character();
+	}
 	// Getters and Setters
 	public String getUsername() {
 		return username;

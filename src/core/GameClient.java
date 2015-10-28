@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Queue;
 
+
+import database.DBHelper;
 // Custom Imports
 //import dataAccessLayer.PlayerDAO;
 import metadata.Constants;
@@ -22,6 +24,7 @@ import metadata.GameRequestTable;
 import networking.request.GameRequest;
 import networking.response.GameResponse;
 import utility.DataReader;
+import java.sql.*;
 
 /**
  * The GameClient class is an extension of the Thread class that represents an
@@ -59,6 +62,8 @@ public class GameClient extends Thread {
         inputStream = mySocket.getInputStream();
         outputStream = mySocket.getOutputStream();
         dataInputStream = new DataInputStream(inputStream);
+        gamestate = Constants.GAMESTATE_NOT_LOGGED_IN;
+        player = new Player();
     }
 
     /**
@@ -126,19 +131,27 @@ public class GameClient extends Thread {
         System.out.println(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new Date()));
         System.out.println("The client stops playing.");
 
-        /*if (player != null) {
-            try {
-                long seconds = (System.currentTimeMillis() - player.getLastSaved()) / 1000;
-                player.setPlayTime(player.getPlayTime() + seconds);
-
-                PlayerDAO.updateLogout(player.getID(), player.getPlayTime());
-            } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
-            }
-
-            GameServer.getInstance().removeActivePlayer(player.getID());
-        }*/
-
+        // update database
+        if (gamestate == Constants.GAMESTATE_PLAYING){
+        	// Update character
+        }else if (gamestate == Constants.GAMESTATE_LOGGED_IN){
+        	// do log out.
+        	DBHelper helper = new DBHelper();
+        	helper.openConnectionToDB();
+        	Connection c = helper.getConnectionToDB();
+    		String sql = "UPDATE user SET is_online = 0 WHERE id = ?";
+    		if (Constants.DEBUG){
+    			System.out.printf("Disconnect user_id = %d/n", player.getId());
+    		}
+    		try {
+        	PreparedStatement pstmt = c.prepareStatement(sql);
+    		pstmt.setInt(1, player.getId());
+    		pstmt.executeUpdate();
+    		helper.closeConnectionToDB();
+    		} catch (Exception e){
+    			e.printStackTrace();
+    		}
+        }
         // Remove this GameClient from the server
         server.deletePlayerThreadOutOfActiveThreads(getId());
     }

@@ -4,16 +4,16 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 
 import metadata.Constants;
+import networking.response.ResponseGoToCharacterSelection;
 import networking.response.ResponseLogout;
 import networking.response.ResponsePlayerLogout;
-import utility.DataReader;
 
-public class RequestLogout extends GameRequest {
+public class RequestGoToCharacterSelection extends GameRequest {
 	
 	/**
 	 * Constructor
 	 */
-	public RequestLogout() {
+	public RequestGoToCharacterSelection() {
 		// TODO Auto-generated constructor stub
 		super();
 	}
@@ -34,11 +34,12 @@ public class RequestLogout extends GameRequest {
     @Override
     public void doBusiness() throws Exception {
     	if (client.getGamestate() == Constants.GAMESTATE_PLAYING){
-        	ResponseLogout response = new ResponseLogout();
+        	ResponseGoToCharacterSelection response = new ResponseGoToCharacterSelection();
     		// client is playing the game with a character. save it
     		makeConnectionToDB();	// open connection to database
     		// update position and hpr
-    		String sql = "UPDATE user SET char_x = ?, char_y = ?, char_z = ?, char_h = ?, char_p = ?, char_z = ? WHERE id = ?;)";
+    		String sql = "UPDATE user SET (char_x, char_y, char_z, char_h, char_p, char_z) "
+    				+ "values(?, ?, ?, ?, ?, ?) WHERE id = ?;)";
     		PreparedStatement pstmt = c.prepareStatement(sql);
     		pstmt.setFloat(1, client.getPlayer().getCharacter().getX());
     		pstmt.setFloat(2, client.getPlayer().getCharacter().getY());
@@ -48,20 +49,19 @@ public class RequestLogout extends GameRequest {
     		pstmt.setFloat(6, client.getPlayer().getCharacter().getR());
     		pstmt.setInt(7, client.getPlayer().getCharacter().getId());
     		try {
-    			pstmt.executeUpdate();	// update database    		// let other clients know that this one has logged out
-        		ResponsePlayerLogout otherResponse = new ResponsePlayerLogout();
-        		otherResponse.setCharacterID(client.getPlayer().getCharacter().getId());
-        		client.getServer().addResponseForAllOnlinePlayers(client.getId(), otherResponse);
-        		// let this client log out
-        		responses.add(response);
-
-        		// stop GameClient object
-        		client.stopClient();
-        		// close connection
-        		closeConnectionToDB();
+    			pstmt.executeUpdate();	// update database
+    			closeConnectionToDB();
     		}catch (Exception e){
     			e.printStackTrace();
     		}
+    		// let other clients know that this one has logged out
+    		ResponsePlayerLogout otherResponse = new ResponsePlayerLogout();
+    		otherResponse.setCharacterID(client.getPlayer().getCharacter().getId());
+    		client.getServer().addResponseForAllOnlinePlayers(client.getId(), otherResponse);
+    		// let this client log out
+    		responses.add(response);
+    		// change client's gamestate to LOGGED IN
+    		client.setGamestate(Constants.GAMESTATE_LOGGED_IN);
     	}
     }
 }

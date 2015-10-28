@@ -42,6 +42,13 @@ public class DBHelper {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * get connection
+	 */
+	public Connection getConnectionToDB(){
+		return this.c;
+	}
 	/**
 	 * Check for the database If it doesn't exist, create one
 	 * http://www.tutorialspoint.com/sqlite/sqlite_java.htm

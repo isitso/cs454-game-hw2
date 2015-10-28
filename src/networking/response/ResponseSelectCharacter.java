@@ -6,7 +6,18 @@ import utility.GamePacket;
 public class ResponseSelectCharacter extends GameResponse {
 	
 	int flag;
-	// Must override abstract class' method
+	
+	/**
+	 * constructor. set response code
+	 */
+	public ResponseSelectCharacter() {
+		// TODO Auto-generated constructor stub
+		responseCode = Constants.S_SELECT_CHARACTER;
+	}
+	
+	/**
+	 * Generate the packet
+	 */
     @Override
     public byte[] constructResponseInBytes() {
         GamePacket packet = new GamePacket(responseCode);
