@@ -43,6 +43,7 @@ public class RequestMove extends GameRequest {
     	ResponseMove response = new ResponseMove();
     	// set character new position
     	client.getPlayer().getCharacter().setPos(x, y, z);
+    	client.getPlayer().getCharacter().setHpr(h, p, r);
     	// generate response
     	response.setMove(client.getPlayer().getCharacter().getId(), x, y, z, h, p, r);
     	// send to other players
