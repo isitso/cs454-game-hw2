@@ -56,14 +56,14 @@ public class RequestChat extends GameRequest {
     	// check for global or private chat
     	if (flag == Constants.CHAT_GLOBAL){
     		// global chat. set the response with sendername and chat msg
-    		response.setGlobalChat(client.getPlayer().getCharacter().getName(), chatMsg);
+    		response.setGlobalChat(client.getPlayer().getUsername(), chatMsg);
     		// add response for all online character except the one sending
     		client.getServer().addResponseForAllOnlinePlayers(client.getId(), response);
     		// add response for the one sending
     		responses.add(response);
     	} else {
     		// private chat. have to look for the character
-    		GameClient targetGameClient = client.getServer().getThreadByCharacterName(receiverName);
+    		GameClient targetGameClient = client.getServer().getThreadByPlayerUserName(receiverName);
     		if (targetGameClient != null){
     			// target character is online. add chat response to him/her
     			targetGameClient.addResponseForUpdate(response);

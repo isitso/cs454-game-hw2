@@ -30,7 +30,6 @@ public class ResponseGoToCharacterSelection extends GameResponse {
     	for (Character c : characterList){
     		packet.addInt32(c.getId());
     		packet.addInt32(c.getTypeId());
-    		packet.addString(c.getName());
     	}
         return packet.getBytes();
     }
