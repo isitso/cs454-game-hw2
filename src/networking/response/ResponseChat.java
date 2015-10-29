@@ -5,7 +5,7 @@ import utility.GamePacket;
 
 public class ResponseChat extends GameResponse {
 	int flag;
-	String senderName, chatMsg;
+	String sender, receiver, chatMsg;
 	
 	/**
 	 * Constructor. set the response code
@@ -27,9 +27,10 @@ public class ResponseChat extends GameResponse {
         
         // add more information if it is not a chat failure
         if (flag != Constants.CHAT_FAIL){
+        	packet.addString(sender);
 	        // add character name if it is private chat
 		    if (flag == Constants.CHAT_PRIVATE){
-		    	packet.addString(senderName);
+		    	packet.addString(receiver);
 	        }
 	        // add the chat msg
 	        packet.addString(chatMsg);
@@ -42,12 +43,14 @@ public class ResponseChat extends GameResponse {
      * @param name sender's name
      * @param msg chat message to be sent target character
      */
-    public void setPrivateChat(String name, String msg){
+    public void setPrivateChat(String sender, String receiver, String msg){
     	// set flag to private
     	flag = Constants.CHAT_PRIVATE;
     	// set character name
-    	senderName = name;
+    	this.sender = sender;
     	chatMsg = msg;
+    	if (Constants.DEBUG)
+    		System.out.println(this);
     }
     
     /**
@@ -58,8 +61,10 @@ public class ResponseChat extends GameResponse {
     public void setGlobalChat(String name, String msg){
     	// set flag to global
     	flag = Constants.CHAT_GLOBAL;
-    	senderName = name;
+    	sender = name;
     	chatMsg = msg;
+    	if (Constants.DEBUG)
+    		System.out.println(this);
     }
     
     /**
@@ -69,5 +74,7 @@ public class ResponseChat extends GameResponse {
      */
     public void setPrivateChatFail(){
     	flag = Constants.CHAT_FAIL;
+    	if (Constants.DEBUG)
+    		System.out.println(this);
     }
 }

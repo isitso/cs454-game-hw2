@@ -52,20 +52,22 @@ public class RequestChat extends GameRequest {
      */
     @Override
     public void doBusiness() throws Exception {
-    	ResponseChat response = new ResponseChat();
+    	ResponseChat otherResponse = new ResponseChat();
     	// check for global or private chat
     	if (flag == Constants.CHAT_GLOBAL){
     		// global chat. set the response with sendername and chat msg
-    		response.setGlobalChat(client.getPlayer().getUsername(), chatMsg);
+    		otherResponse.setGlobalChat(client.getPlayer().getUsername(), chatMsg);
     		// add response for all online character except the one sending
-    		client.getServer().addResponseForAllOnlinePlayers(client.getId(), response);
+    		client.getServer().addResponseForAllOnlinePlayers(client.getId(), otherResponse);
     		// add response for the one sending
-    		responses.add(response);
+    		//responses.add(otherResponse);
     	} else {
     		// private chat. have to look for the character
     		GameClient targetGameClient = client.getServer().getThreadByPlayerUserName(receiverName);
+			ResponseChat response = new ResponseChat();    		
     		if (targetGameClient != null){
     			// target character is online. add chat response to him/her
+    			response.setPrivateChat(client.getPlayer().getUsername(), receiverName, chatMsg);
     			targetGameClient.addResponseForUpdate(response);
     		} else {
     			// no target character found. send back chat failure to the sender
