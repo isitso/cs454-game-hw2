@@ -159,14 +159,16 @@ public class GameServer {
 	 *            holds the username
 	 * @return the GameClient thread
 	 */
-	/*
-	 * public GameClient getThreadByPlayerUserName(String userName) { for
-	 * (GameClient aClient : activeThreads.values()) { if
-	 * (aClient.getPlayer().getUsername().equals(userName)) { return aClient; }
-	 * }
-	 * 
-	 * return null; }
-	 */
+	
+	public GameClient getThreadByPlayerUserName(String userName) { for
+		(GameClient aClient : activeThreads.values()) { 
+			if (aClient.getPlayer().getUsername().equals(userName)) { 
+				return aClient; 
+			}
+		}
+	 	return null; 
+	 }
+	 
 
 	/**
 	 * Get the GameClient thread for the player using character name
@@ -175,7 +177,7 @@ public class GameServer {
 	 *            name of the character to look for
 	 * @return GameClient thread
 	 */
-	public GameClient getThreadByCharacterName(String characterName) {
+	/*public GameClient getThreadByCharacterName(String characterName) {
 		// loop through the list of threads and look for the character
 		for (GameClient client : activeThreads.values()) {
 			if (client.getPlayer().getCharacter().getName()
@@ -184,7 +186,7 @@ public class GameServer {
 		}
 		// if cannot find the character return null
 		return null;
-	}
+	}*/
 
 	public int getNumberOfCurrentThreads() {
 		return activeThreads.size();

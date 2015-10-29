@@ -74,7 +74,6 @@ public class RequestSelectCharacter extends GameRequest {
 				// success
 				Character character = new core.Character();
 				character.setId(rs.getInt("id"));
-				character.setName(client.getPlayer().getUsername());
 				character.setTypeId(rs.getInt("char_type_id"));
 				character.setX(rs.getInt("char_x"));
 				character.setY(rs.getInt("char_y"));

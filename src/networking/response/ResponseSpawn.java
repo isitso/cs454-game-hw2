@@ -23,7 +23,6 @@ public class ResponseSpawn extends GameResponse {
         GamePacket packet = new GamePacket(responseCode);
         packet.addInt32(flag);
         packet.addInt32(character.getId());
-        packet.addString(character.getName());
         packet.addInt32(character.getTypeId());
         packet.addFloat(character.getX());
         packet.addFloat(character.getY());
