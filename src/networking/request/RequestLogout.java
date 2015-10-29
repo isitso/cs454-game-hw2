@@ -37,9 +37,9 @@ public class RequestLogout extends GameRequest {
         	ResponseLogout response = new ResponseLogout();
     		try {
     			// let other clients know that this one has logged out
-        		ResponsePlayerLogout otherResponse = new ResponsePlayerLogout();
-        		otherResponse.setCharacterID(client.getPlayer().getCharacter().getId());
-        		client.getServer().addResponseForAllOnlinePlayers(client.getId(), otherResponse);
+//        		ResponsePlayerLogout otherResponse = new ResponsePlayerLogout();
+//        		otherResponse.setCharacterID(client.getPlayer().getCharacter().getId());
+//        		client.getServer().addResponseForAllOnlinePlayers(client.getId(), otherResponse);
         		// let this client log out
         		responses.add(response);
 

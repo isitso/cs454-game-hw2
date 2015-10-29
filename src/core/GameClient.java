@@ -22,6 +22,7 @@ import metadata.GameRequestTable;
 //import model.Player;
 import networking.request.GameRequest;
 import networking.response.GameResponse;
+import networking.response.ResponsePlayerLogout;
 import utility.DataReader;
 
 import java.sql.*;
@@ -169,6 +170,11 @@ public class GameClient extends Thread {
 		    	pstmt.setInt(1, player.getId());
 		    	pstmt.executeUpdate();
 		    	closeConnectionToDB();
+		    	
+		    	// let others know that this client logged out
+        		ResponsePlayerLogout otherResponse = new ResponsePlayerLogout();
+        		otherResponse.setCharacterID(getPlayer().getCharacter().getId());
+        		getServer().addResponseForAllOnlinePlayers(getId(), otherResponse);
 		    } catch (Exception e){
 			e.printStackTrace();
 		    }
